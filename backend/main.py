@@ -4,7 +4,7 @@ import re
 import urllib.request
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-PORT = 8000
+PORT = int(os.environ.get("PORT", 8000))
 DEFAULT_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
 def call_gemini_rest(prompt: str, api_key: str) -> str:
