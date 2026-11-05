@@ -181,5 +181,5 @@ if __name__ == "__main__":
     print(f" ElevateAI Advanced Server Running!")
     print(f" Open portal: http://127.0.0.1:{PORT}")
     print(f"=======================================================\n")
-    server = HTTPServer(("127.0.0.1", PORT), PortalHandler)
+    server = HTTPServer(("0.0.0.0", PORT), PortalHandler)
     server.serve_forever()
