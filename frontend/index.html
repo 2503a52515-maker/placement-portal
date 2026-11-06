@@ -1,480 +1,357 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ElevateAI | AI-Driven Placement & Career Recommendation Portal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #090d16; color: #f1f5f9; }
-    .glass { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .gradient-text { background: linear-gradient(135deg, #60a5fa, #c084fc, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .nav-active { background: linear-gradient(90deg, rgba(59,130,246,0.2), rgba(147,51,234,0.05)); border-left: 3px solid #60a5fa; color: #60a5fa; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElevateAI | Placement Intelligence v4.5</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
+<body class="bg-gray-900 text-gray-100 flex min-h-screen">
 
-  <!-- Sidebar Navigation -->
-  <aside class="w-full lg:w-72 glass lg:min-h-screen p-6 flex flex-col justify-between z-20 shrink-0">
-    <div>
-      <div class="flex items-center gap-3 mb-8">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-          <i data-lucide="cpu" class="text-white w-6 h-6"></i>
-        </div>
-        <div>
-          <h1 class="font-extrabold text-xl tracking-tight gradient-text">ElevateAI</h1>
-          <p class="text-xs text-slate-400">Placement Intelligence v4.5</p>
-        </div>
-      </div>
-
-      <nav class="space-y-1">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition nav-active">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Placement Dashboard
-        </button>
-        <button onclick="switchTab('profile')" id="nav-profile" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 transition">
-          <i data-lucide="user-check" class="w-4 h-4"></i> Student Profile & AI Sync
-        </button>
-        <button onclick="switchTab('resume')" id="nav-resume" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 transition">
-          <i data-lucide="file-search" class="w-4 h-4"></i> Resume ATS Analyzer
-        </button>
-        <button onclick="switchTab('aptitude')" id="nav-aptitude" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 transition">
-          <i data-lucide="brain-circuit" class="w-4 h-4"></i> Aptitude & Coding Arena
-        </button>
-        <button onclick="switchTab('interview')" id="nav-interview" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 transition">
-          <i data-lucide="mic" class="w-4 h-4"></i> AI Mock Interview
-        </button>
-        <button onclick="switchTab('coverletter')" id="nav-coverletter" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 transition">
-          <i data-lucide="mail-plus" class="w-4 h-4"></i> AI Cover Letter Studio
-        </button>
-        <button onclick="switchTab('github')" id="nav-github" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 transition">
-          <i data-lucide="github" class="w-4 h-4"></i> GitHub Portfolio Audit
-        </button>
-        <button onclick="switchTab('companies')" id="nav-companies" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 transition">
-          <i data-lucide="building-2" class="w-4 h-4"></i> Employer Smart Matcher
-        </button>
-      </nav>
-    </div>
-
-    <!-- Gemini Key Input -->
-    <div class="mt-6 pt-4 border-t border-slate-800">
-      <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Gemini API Key (Optional)</label>
-      <input id="geminiKeyInput" type="password" placeholder="Paste AIza... key" class="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-blue-500" />
-      <div class="flex items-center gap-2 mt-2 text-xs text-emerald-400">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Real-Time Engines Active</span>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Workspace -->
-  <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
-    
-    <!-- Top Banner -->
-    <div class="relative rounded-2xl overflow-hidden mb-8 border border-slate-800 shadow-2xl">
-      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80" alt="Banner" class="w-full h-40 object-cover opacity-25" />
-      <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-transparent flex flex-col justify-center px-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold w-fit mb-2">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI-Enabled Campus Recruitment & Career Guidance Portal
-        </div>
-        <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Welcome back, <span class="gradient-text" id="bannerName">B.Tech CSE (AIML) Student</span></h2>
-        <p class="text-slate-400 text-sm mt-1">Real-time ATS scoring, skill-gap diagnostics, cover letter generator, and company matching.</p>
-      </div>
-    </div>
-
-    <!-- TAB 1: DASHBOARD -->
-    <section id="tab-dashboard" class="space-y-8">
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-        <div class="glass p-5 rounded-2xl">
-          <p class="text-xs text-slate-400 font-medium">Placement Readiness</p>
-          <h3 class="text-3xl font-extrabold text-blue-400 mt-1" id="kpiReadiness">84%</h3>
-          <p class="text-xs text-emerald-400 mt-3 flex items-center gap-1"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Top 15% in Cohort</p>
-        </div>
-        <div class="glass p-5 rounded-2xl">
-          <p class="text-xs text-slate-400 font-medium">Resume ATS Score</p>
-          <h3 class="text-3xl font-extrabold text-purple-400 mt-1" id="kpiAts">78/100</h3>
-          <p class="text-xs text-slate-400 mt-3">Optimized for AI/ML Engineer</p>
-        </div>
-        <div class="glass p-5 rounded-2xl">
-          <p class="text-xs text-slate-400 font-medium">Aptitude Percentile</p>
-          <h3 class="text-3xl font-extrabold text-emerald-400 mt-1" id="kpiAptitude">80%</h3>
-          <p class="text-xs text-slate-400 mt-3">Clears Tier-1 Cutoffs (75%+)</p>
-        </div>
-        <div class="glass p-5 rounded-2xl">
-          <p class="text-xs text-slate-400 font-medium">Eligible Companies</p>
-          <h3 class="text-3xl font-extrabold text-amber-400 mt-1" id="kpiCompanies">5 / 6</h3>
-          <p class="text-xs text-slate-400 mt-3">Package Range: 6.5 - 26 LPA</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="glass p-6 rounded-2xl lg:col-span-1">
-          <h3 class="text-base font-bold mb-4 flex items-center gap-2"><i data-lucide="radar" class="w-4 h-4 text-blue-400"></i> Skill Radar</h3>
-          <canvas id="skillRadarChart" height="250"></canvas>
-        </div>
-        <div class="glass p-6 rounded-2xl lg:col-span-2 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-bold flex items-center gap-2"><i data-lucide="compass" class="w-4 h-4 text-purple-400"></i> AI Career Recommendations</h3>
-              <button onclick="runProfileAnalysis()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold flex items-center gap-1.5">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Recalculate
-              </button>
+    <!-- LOGIN SCREEN OVERLAY -->
+    <div id="login-screen" class="fixed inset-0 bg-gray-950 z-50 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl space-y-6">
+            <div class="text-center">
+                <div class="inline-block bg-indigo-600 p-3 rounded-2xl text-white font-bold text-xl mb-2">AI</div>
+                <h1 class="text-2xl font-bold text-white">ElevateAI Portal Login</h1>
+                <p class="text-xs text-gray-400 mt-1">Enter your credentials to access your placement dashboard</p>
             </div>
-            <div id="recommendedRolesContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-          </div>
-          <div class="mt-6 pt-5 border-t border-slate-800">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">4-Week Personalized Study Plan</h4>
-            <div id="missingSkillsBadges" class="flex flex-wrap gap-2 mb-4"></div>
-            <ul id="roadmapList" class="space-y-2 text-xs text-slate-300"></ul>
-          </div>
+            <form id="loginForm" class="space-y-4">
+                <input type="email" id="loginEmail" placeholder="College Email (e.g. student@sru.edu.in)" required class="w-full p-3 bg-gray-950 border border-gray-800 rounded-lg text-white text-sm">
+                <input type="password" id="loginPassword" placeholder="Password" required class="w-full p-3 bg-gray-950 border border-gray-800 rounded-lg text-white text-sm">
+                <button type="submit" class="w-full bg-indigo-600 text-white p-3 rounded-lg font-bold hover:bg-indigo-700 transition text-sm">Login to Dashboard</button>
+            </form>
         </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- TAB 2: PROFILE -->
-    <section id="tab-profile" class="hidden space-y-6">
-      <div class="glass p-8 rounded-2xl max-w-4xl">
-        <h3 class="text-xl font-bold mb-1">Student Academic & Technical Profile</h3>
-        <p class="text-xs text-slate-400 mb-6">Update your parameters to retrain your AI career recommendation model.</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div><label class="block text-xs text-slate-400 mb-1">Full Name</label><input id="profName" type="text" value="B.Tech CSE (AIML) Student" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
-          <div><label class="block text-xs text-slate-400 mb-1">Roll No.</label><input id="profRoll" type="text" value="2303A52001" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
-          <div><label class="block text-xs text-slate-400 mb-1">Branch</label><input id="profBranch" type="text" value="CSE (AI & ML)" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
-          <div><label class="block text-xs text-slate-400 mb-1">CGPA (10 Scale)</label><input id="profCgpa" type="number" step="0.1" value="8.6" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
-          <div><label class="block text-xs text-slate-400 mb-1">Backlogs</label><input id="profBacklogs" type="number" value="0" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
-          <div><label class="block text-xs text-slate-400 mb-1">Target Role</label><select id="profRole" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm"><option value="AI/ML Engineer">AI/ML Engineer</option><option value="Full Stack Developer">Full Stack Developer</option><option value="Data Scientist">Data Scientist</option></select></div>
-          <div class="md:col-span-2"><label class="block text-xs text-slate-400 mb-1">Technical Skills</label><input id="profSkills" type="text" value="Python, React, FastAPI, Machine Learning, SQL, Git, MongoDB" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
+    <!-- Sidebar Navigation -->
+    <div class="w-72 bg-gray-950 p-6 border-r border-gray-800 flex flex-col justify-between">
+        <div class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold">AI</div>
+                <div>
+                    <h1 class="font-bold text-lg text-white">ElevateAI</h1>
+                    <p class="text-xs text-gray-400">Placement Intelligence v4.5</p>
+                </div>
+            </div>
+
+            <nav class="space-y-1">
+                <a href="#" onclick="showSection('dashboard')" id="nav-dashboard" class="block py-2.5 px-4 rounded-xl text-sm font-medium bg-indigo-600 text-white">📊 Placement Dashboard</a>
+                <a href="#" onclick="showSection('profile')" id="nav-profile" class="block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300">👤 Student Profile & AI Sync</a>
+                <a href="#" onclick="showSection('resume')" id="nav-resume" class="block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300">📄 Resume ATS Analyzer</a>
+                <a href="#" onclick="showSection('aptitude')" id="nav-aptitude" class="block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300">⚡ Aptitude & Coding Arena</a>
+                <a href="#" onclick="showSection('mock')" id="nav-mock" class="block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300">🎙️ AI Mock Interview</a>
+                <a href="#" onclick="showSection('cover')" id="nav-cover" class="block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300">✉️ AI Cover Letter Studio</a>
+                <a href="#" onclick="showSection('github')" id="nav-github" class="block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300">💻 GitHub Portfolio Audit</a>
+                <a href="#" onclick="showSection('matcher')" id="nav-matcher" class="block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300">🏢 Employer Smart Matcher</a>
+            </nav>
         </div>
-        <button onclick="saveAndAnalyzeProfile()" class="mt-6 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 font-bold text-sm shadow-lg">Save Profile & Retrain AI</button>
-      </div>
-    </section>
 
-    <!-- TAB 3: RESUME ATS -->
-    <section id="tab-resume" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="glass p-6 rounded-2xl">
-          <h3 class="text-lg font-bold mb-2">Paste Resume Text for ATS Audit</h3>
-          <textarea id="resumeRawText" rows="10" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 mb-4" placeholder="Paste your resume text here..."></textarea>
-          <button onclick="analyzeResumeNow()" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-sm">Run ATS Audit</button>
+        <div class="space-y-3 pt-4 border-t border-gray-800">
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">GEMINI API KEY (OPTIONAL)</label>
+                <input type="password" placeholder="Paste Alza... key" class="w-full p-2 bg-gray-900 border border-gray-800 rounded text-xs text-gray-300 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="flex items-center space-x-2 text-xs text-green-400">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span>Real-Time Engines Active</span>
+            </div>
         </div>
-        <div class="glass p-6 rounded-2xl space-y-5">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-            <h4 class="text-sm font-bold">ATS Score</h4>
-            <div class="text-3xl font-extrabold text-emerald-400" id="resumeAtsResult">78 / 100</div>
-          </div>
-          <div><h5 class="text-xs font-bold uppercase text-slate-400 mb-2">Extracted Skills</h5><div id="resumeExtractedSkills" class="flex flex-wrap gap-1.5"></div></div>
-          <div><h5 class="text-xs font-bold uppercase text-rose-400 mb-2">Missing Keywords</h5><div id="resumeMissingKeywords" class="flex flex-wrap gap-1.5"></div></div>
-          <div><h5 class="text-xs font-bold uppercase text-amber-400 mb-2">Improvements</h5><ul id="resumeImprovements" class="space-y-1 text-xs text-slate-300 list-disc pl-4"></ul></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 p-8 overflow-y-auto">
+        <div class="max-w-4xl mx-auto space-y-6">
+            
+            <div class="p-6 bg-gradient-to-r from-indigo-900 to-gray-900 rounded-2xl border border-indigo-800 shadow-lg">
+                <h2 class="text-2xl font-extrabold text-white">Welcome back, B.Tech CSE (AIML) Student</h2>
+                <p class="text-indigo-200 text-sm mt-1">AI-Enabled Campus Recruitment & Career Guidance Portal</p>
+            </div>
+
+            <!-- 1. DASHBOARD SECTION -->
+            <div id="sec-dashboard" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-5 bg-gray-950 rounded-2xl border border-gray-800 text-center">
+                        <p class="text-xs text-gray-400">ATS Resume Score</p>
+                        <h3 class="text-3xl font-extrabold text-indigo-400 mt-2">95%</h3>
+                        <p class="text-xs text-green-400 mt-1">▲ Excellent Match</p>
+                    </div>
+                    <div class="p-5 bg-gray-950 rounded-2xl border border-gray-800 text-center">
+                        <p class="text-xs text-gray-400">Placement Readiness</p>
+                        <h3 class="text-3xl font-extrabold text-green-400 mt-2">90%</h3>
+                        <p class="text-xs text-green-400 mt-1">▲ High Readiness</p>
+                    </div>
+                    <div class="p-5 bg-gray-950 rounded-2xl border border-gray-800 text-center">
+                        <p class="text-xs text-gray-400">Aptitude Score</p>
+                        <h3 class="text-3xl font-extrabold text-purple-400 mt-2">88%</h3>
+                        <p class="text-xs text-purple-400 mt-1">▲ Strong Logical</p>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4">
+                    <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">Placement Progress Analytics</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>Python & AI Skills</span>
+                                <span class="text-green-400">92%</span>
+                            </div>
+                            <div class="w-full bg-gray-900 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-green-500 h-full rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>Resume ATS Optimization</span>
+                                <span class="text-indigo-400">95%</span>
+                            </div>
+                            <div class="w-full bg-gray-900 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-indigo-500 h-full rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>Aptitude & Coding Tests</span>
+                                <span class="text-purple-400">88%</span>
+                            </div>
+                            <div class="w-full bg-gray-900 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-purple-500 h-full rounded-full" style="width: 88%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. PROFILE SECTION -->
+            <div id="sec-profile" class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4 hidden">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">Student Profile & AI Sync</h3>
+                <form id="profileForm" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="name" placeholder="Full Name" required class="p-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm">
+                        <input type="text" id="branch" value="CSE - AIML" required class="p-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="cgpa" placeholder="CGPA" required class="p-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm">
+                        <select id="targetRole" class="p-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm">
+                            <option value="AI/ML Engineer">AI/ML Engineer</option>
+                            <option value="Software Engineer">Software Engineer</option>
+                            <option value="Data Scientist">Data Scientist</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white p-3 rounded-lg font-bold hover:bg-indigo-700 transition text-sm">Save Profile & Sync AI</button>
+                </form>
+            </div>
+
+            <!-- 3. RESUME ATS ANALYZER (PDF) -->
+            <div id="sec-resume" class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4 hidden">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">Resume ATS Analyzer (PDF)</h3>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Upload Resume (.pdf only)</label>
+                    <input type="file" id="resumePdf" accept=".pdf" class="w-full p-3 bg-gray-900 border border-gray-800 rounded-lg text-gray-300 text-sm">
+                </div>
+                <button onclick="uploadResume()" class="w-full bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700 transition text-sm">Upload & Analyze PDF</button>
+                <div id="resumeResult" class="p-4 bg-gray-900 rounded-lg hidden border border-gray-800"></div>
+            </div>
+
+            <!-- 4. APTITUDE & CODING ARENA (Interactive Mock Test) -->
+            <div id="sec-aptitude" class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4 hidden">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">⚡ Aptitude & Coding Arena</h3>
+                <p class="text-sm text-gray-300">Take the AI live mock test below to evaluate your technical skills.</p>
+                
+                <div id="quizContainer" class="p-4 bg-gray-900 rounded-xl border border-gray-800 space-y-4">
+                    <p class="font-bold text-indigo-300 text-sm">Question 1: What is the time complexity of Binary Search?</p>
+                    <div class="space-y-2 text-sm">
+                        <label class="block p-3 bg-gray-950 rounded-lg border border-gray-800 cursor-pointer hover:border-indigo-500">
+                            <input type="radio" name="quizAns" value="O(n)" class="mr-2"> O(n)
+                        </label>
+                        <label class="block p-3 bg-gray-950 rounded-lg border border-gray-800 cursor-pointer hover:border-indigo-500">
+                            <input type="radio" name="quizAns" value="O(log n)" class="mr-2"> O(log n)
+                        </label>
+                        <label class="block p-3 bg-gray-950 rounded-lg border border-gray-800 cursor-pointer hover:border-indigo-500">
+                            <input type="radio" name="quizAns" value="O(n^2)" class="mr-2"> O(n^2)
+                        </label>
+                    </div>
+                    <button onclick="submitQuiz()" class="w-full bg-indigo-600 text-white p-3 rounded-lg font-bold text-sm hover:bg-indigo-700 transition">Submit Answer & Evaluate</button>
+                </div>
+                <div id="aptitudeResult" class="p-4 bg-gray-900 rounded-lg hidden border border-gray-800"></div>
+            </div>
+
+            <!-- 5. AI MOCK INTERVIEW -->
+            <div id="sec-mock" class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4 hidden">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">🎙️ AI Mock Interview</h3>
+                <p class="text-sm text-gray-300">Simulate a technical interview based on your AIML specialization.</p>
+                <button onclick="runAIAudioMock()" class="w-full bg-purple-600 text-white p-3 rounded-lg font-bold text-sm">Start AI Mock Interview</button>
+                <div id="mockResult" class="p-4 bg-gray-900 rounded-lg hidden border border-gray-800 text-sm text-gray-300"></div>
+            </div>
+
+            <!-- 6. AI COVER LETTER STUDIO -->
+            <div id="sec-cover" class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4 hidden">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">✉️ AI Cover Letter Studio</h3>
+                <input type="text" id="targetCompany" placeholder="Target Company Name (e.g. Google / Microsoft)" class="w-full p-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm mb-3">
+                <button onclick="runCoverLetter()" class="w-full bg-indigo-600 text-white p-3 rounded-lg font-bold text-sm">Generate AI Cover Letter</button>
+                <div id="coverResult" class="p-4 bg-gray-900 rounded-lg hidden border border-gray-800 text-xs whitespace-pre-line text-gray-300"></div>
+            </div>
+
+            <!-- 7. GITHUB PORTFOLIO AUDIT -->
+            <div id="sec-github" class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4 hidden">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">💻 GitHub Portfolio Audit</h3>
+                <input type="text" placeholder="Enter GitHub Username or Profile URL" class="w-full p-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm mb-3">
+                <button onclick="runGitHubAudit()" class="w-full bg-green-600 text-white p-3 rounded-lg font-bold text-sm">Audit Repository</button>
+                <div id="githubResult" class="p-4 bg-gray-900 rounded-lg hidden border border-gray-800 text-sm text-gray-300"></div>
+            </div>
+
+            <!-- 8. EMPLOYER SMART MATCHER & VISUAL GRAPHICAL SKILL GAP / COURSES -->
+            <div id="sec-matcher" class="p-6 bg-gray-950 rounded-2xl border border-gray-800 space-y-4 hidden">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-800 pb-2">🏢 Employer Smart Matcher & Missing Skills Visual Analytics</h3>
+                <p class="text-xs text-gray-400">AI scans your missing skills against target roles and maps them to specific courses with graphs.</p>
+                <button onclick="analyzeSmartMatcher()" class="w-full bg-purple-600 text-white p-3 rounded-lg font-bold hover:bg-purple-700 transition text-sm">Run AI Skill Gap & Course Graph Analysis</button>
+                
+                <div id="matcherResult" class="mt-4 space-y-4 hidden"></div>
+            </div>
+
         </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- TAB 4: APTITUDE -->
-    <section id="tab-aptitude" class="hidden space-y-6">
-      <div class="glass p-8 rounded-2xl max-w-3xl">
-        <h3 class="text-xl font-bold mb-4">Placement Aptitude Assessment</h3>
-        <div id="quizContainer" class="space-y-6"></div>
-        <button onclick="submitAptitudeQuiz()" class="mt-6 px-6 py-3 rounded-xl bg-emerald-600 font-bold text-sm">Submit Assessment</button>
-        <p id="quizFeedback" class="mt-4 text-sm font-bold text-blue-400"></p>
-      </div>
-    </section>
-
-    <!-- TAB 5: MOCK INTERVIEW -->
-    <section id="tab-interview" class="hidden space-y-6">
-      <div class="glass p-8 rounded-2xl max-w-4xl space-y-5">
-        <div class="flex justify-between items-center">
-          <h3 class="text-xl font-bold">AI Technical Interview Simulator</h3>
-          <button onclick="nextInterviewQuestion()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold">Next Question</button>
-        </div>
-        <div class="p-4 rounded-xl bg-blue-950/40 border border-blue-500/30">
-          <p id="interviewQuestionText" class="text-base font-semibold text-white">Explain how you prevent overfitting in Deep Learning and deploy via FastAPI.</p>
-        </div>
-        <textarea id="interviewAnswerInput" rows="5" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm text-slate-200" placeholder="Type your answer..."></textarea>
-        <button onclick="evaluateInterviewAnswer()" class="px-6 py-3 rounded-xl bg-purple-600 font-bold text-sm">Evaluate with AI</button>
-        <div id="interviewEvalBox" class="hidden p-5 rounded-xl bg-slate-900 border border-slate-700 space-y-2">
-          <div class="flex justify-between"><span class="text-xs font-bold uppercase text-purple-400">Verdict</span><span id="interviewScoreBadge" class="text-lg font-extrabold text-emerald-400">88 / 100</span></div>
-          <p id="interviewFeedbackText" class="text-xs text-slate-300"></p>
-          <p id="interviewIdealText" class="text-xs text-blue-300 bg-blue-950/40 p-3 rounded-lg mt-2"></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 6: COVER LETTER STUDIO (NEW) -->
-    <section id="tab-coverletter" class="hidden space-y-6">
-      <div class="glass p-8 rounded-2xl max-w-4xl space-y-5">
-        <h3 class="text-xl font-bold">AI Cover Letter & Cold Email Generator</h3>
-        <p class="text-xs text-slate-400">Generate tailor-made cover letters and LinkedIn recruiter messages instantly.</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div><label class="block text-xs text-slate-400 mb-1">Company Name</label><input id="clCompany" type="text" value="Amazon India" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
-          <div><label class="block text-xs text-slate-400 mb-1">Target Role</label><input id="clRole" type="text" value="AI/ML Engineer" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" /></div>
-        </div>
-        <button onclick="generateCoverLetter()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-sm">Generate AI Cover Letter & Email</button>
-        <div id="coverLetterOutput" class="hidden space-y-4 pt-4">
-          <div>
-            <h4 class="text-xs font-bold uppercase text-blue-400 mb-1">Generated Cover Letter</h4>
-            <textarea id="clResultText" rows="7" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200"></textarea>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold uppercase text-emerald-400 mb-1">LinkedIn Cold Outreach Message</h4>
-            <textarea id="ceResultText" rows="5" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200"></textarea>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 7: GITHUB PORTFOLIO AUDIT (NEW) -->
-    <section id="tab-github" class="hidden space-y-6">
-      <div class="glass p-8 rounded-2xl max-w-4xl space-y-5">
-        <h3 class="text-xl font-bold">GitHub & Project Portfolio Health Audit</h3>
-        <p class="text-xs text-slate-400">Analyze your GitHub repository activity and codebase documentation quality.</p>
-        <div class="flex gap-4">
-          <input id="ghUsername" type="text" placeholder="Enter GitHub Username (e.g., student-dev)" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm" />
-          <button onclick="auditGitHub()" class="px-6 py-2.5 rounded-xl bg-purple-600 font-bold text-sm">Audit Portfolio</button>
-        </div>
-        <div id="ghOutput" class="hidden p-6 rounded-xl bg-slate-900 border border-slate-700 space-y-3">
-          <div class="flex justify-between items-center"><span class="font-bold text-sm">Portfolio Health Score</span><span id="ghScore" class="text-2xl font-extrabold text-emerald-400">88/100</span></div>
-          <p class="text-xs text-slate-400" id="ghRepos">Analyzed 14 public repositories.</p>
-          <div><h5 class="text-xs font-bold text-slate-300 mb-1">Key Strengths</h5><ul id="ghStrengths" class="space-y-1 text-xs text-slate-300 list-disc pl-4"></ul></div>
-          <div><h5 class="text-xs font-bold text-amber-400 mb-1">Recommendations</h5><ul id="ghRecs" class="space-y-1 text-xs text-slate-300 list-disc pl-4"></ul></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 8: COMPANIES -->
-    <section id="tab-companies" class="hidden space-y-6">
-      <h3 class="text-xl font-bold">Campus Recruiter Eligibility Matcher</h3>
-      <div id="companyGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
-    </section>
-
-  </main>
-
-  <script>
-    const API_BASE = "http://127.0.0.1:8000";
-    let appState = {
-      name: "B.Tech CSE (AIML) Student",
-      roll_no: "2303A52001",
-      branch: "CSE (AI & ML)",
-      cgpa: 8.6,
-      backlogs: 0,
-      skills: ["Python", "React", "FastAPI", "Machine Learning", "SQL", "Git"],
-      aptitude_score: 80,
-      ats_score: 78,
-      readiness_score: 84,
-      target_role: "AI/ML Engineer"
-    };
-
-    const companyDatabase = [
-      { name: "TCS Digital & Prime", role: "Digital Engineer", ctc: "7.0 - 11.5 LPA", minCgpa: 6.5, minApt: 65, logo: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80" },
-      { name: "Amazon India", role: "SDE-1", ctc: "18.0 - 26.0 LPA", minCgpa: 7.5, minApt: 80, logo: "https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?auto=format&fit=crop&w=400&q=80" },
-      { name: "Darwinbox", role: "Product Engineer", ctc: "12.0 - 16.5 LPA", minCgpa: 7.5, minApt: 75, logo: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80" },
-      { name: "Infosys Specialist", role: "Specialist Programmer", ctc: "9.5 LPA", minCgpa: 6.8, minApt: 70, logo: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?auto=format&fit=crop&w=400&q=80" },
-      { name: "Microsoft IDC", role: "Software Engineer", ctc: "22.0 - 32.0 LPA", minCgpa: 8.0, minApt: 85, logo: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" },
-      { name: "Deloitte USI", role: "Technology Analyst", ctc: "7.6 - 9.0 LPA", minCgpa: 6.5, minApt: 65, logo: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=400&q=80" }
-    ];
-
-    const quizQuestions = [
-      { q: "1. Time complexity of searching in a balanced BST?", options: ["O(n)", "O(log n)", "O(1)", "O(n log n)"], ans: 1 },
-      { q: "2. Best evaluation metric for imbalanced fraud datasets?", options: ["Accuracy", "F1-Score & Precision-Recall", "MSE", "R-Squared"], ans: 1 },
-      { q: "3. HTTP status code for successful resource creation?", options: ["200", "201 Created", "204", "400"], ans: 1 }
-    ];
-
-    const interviewQuestions = [
-      "Explain how you prevent overfitting in Deep Learning and deploy via FastAPI.",
-      "How does React's Virtual DOM work and how do you optimize re-renders?"
-    ];
-    let currentQIndex = 0;
-    let radarChartInstance = null;
-
-    function switchTab(tabId) {
-      ["dashboard", "profile", "resume", "aptitude", "interview", "coverletter", "github", "companies"].forEach(id => {
-        document.getElementById(`tab-${id}`).classList.add("hidden");
-        document.getElementById(`nav-${id}`).classList.remove("nav-active");
-      });
-      document.getElementById(`tab-${tabId}`).classList.remove("hidden");
-      document.getElementById(`nav-${tabId}`).classList.add("nav-active");
-    }
-
-    function renderRadarChart() {
-      const ctx = document.getElementById("skillRadarChart").getContext("2d");
-      if (radarChartInstance) radarChartInstance.destroy();
-      radarChartInstance = new Chart(ctx, {
-        type: "radar",
-        data: {
-          labels: ["Programming & DSA", "AI / ML", "Web & APIs", "Aptitude", "ATS Resume", "CGPA"],
-          datasets: [{
-            label: "Student Profile",
-            data: [90, 88, 85, appState.aptitude_score, appState.ats_score, Math.round(appState.cgpa * 10)],
-            backgroundColor: "rgba(59, 130, 246, 0.25)",
-            borderColor: "#60a5fa",
-            borderWidth: 2
-          }]
-        },
-        options: { scales: { r: { beginAtZero: true, max: 100, grid: { color: "rgba(255,255,255,0.08)" }, pointLabels: { color: "#cbd5e1" }, ticks: { display: false } } }, plugins: { legend: { display: false } } }
-      });
-    }
-
-    async function runProfileAnalysis() {
-      const apiKey = document.getElementById("geminiKeyInput").value;
-      try {
-        const res = await fetch(`${API_BASE}/api/analyze-profile`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...appState, api_key: apiKey })
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let res = await fetch('/api/login', { method: 'POST' });
+            let data = await res.json();
+            if(data.status === 'success') {
+                document.getElementById('login-screen').classList.add('hidden');
+            }
         });
-        const data = await res.json();
-        updateDashboardWithAI(data);
-      } catch (e) { console.error(e); }
-    }
 
-    function updateDashboardWithAI(data) {
-      appState.readiness_score = data.readiness_score;
-      document.getElementById("kpiReadiness").innerText = `${data.readiness_score}%`;
-      document.getElementById("kpiAts").innerText = `${appState.ats_score}/100`;
-      document.getElementById("kpiAptitude").innerText = `${appState.aptitude_score}%`;
-      document.getElementById("bannerName").innerText = appState.name;
+        function showSection(sec) {
+            const sections = ['dashboard', 'profile', 'resume', 'aptitude', 'mock', 'cover', 'github', 'matcher'];
+            sections.forEach(s => {
+                document.getElementById('sec-' + s).classList.add('hidden');
+                document.getElementById('nav-' + s).className = "block py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 text-gray-300";
+            });
 
-      document.getElementById("recommendedRolesContainer").innerHTML = data.recommended_roles.map(r => `
-        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-          <div class="flex justify-between mb-2"><span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400">${r.match}% Match</span><span class="text-xs font-bold text-blue-400">${r.package_lpa}</span></div>
-          <h4 class="font-bold text-sm text-white">${r.role}</h4>
-          <p class="text-xs text-slate-400 mt-1">${r.reason}</p>
-        </div>
-      `).join("");
+            document.getElementById('sec-' + sec).classList.remove('hidden');
+            document.getElementById('nav-' + sec).className = "block py-2.5 px-4 rounded-xl text-sm font-medium bg-indigo-600 text-white";
+        }
 
-      document.getElementById("missingSkillsBadges").innerHTML = data.missing_skills.map(s => `<span class="px-2.5 py-1 rounded bg-rose-500/10 text-rose-300 text-xs font-semibold">+ ${s}</span>`).join("");
-      document.getElementById("roadmapList").innerHTML = data.roadmap.map(step => `<li>• ${step}</li>`).join("");
-      renderRadarChart();
-      renderCompanies();
-    }
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let res = await fetch('/api/save-profile', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    branch: document.getElementById('branch').value,
+                    cgpa: document.getElementById('cgpa').value
+                })
+            });
+            let data = await res.json();
+            alert(data.message);
+            showSection('resume');
+        });
 
-    function saveAndAnalyzeProfile() {
-      appState.name = document.getElementById("profName").value;
-      appState.cgpa = parseFloat(document.getElementById("profCgpa").value) || 8.0;
-      appState.backlogs = parseInt(document.getElementById("profBacklogs").value) || 0;
-      appState.target_role = document.getElementById("profRole").value;
-      appState.skills = document.getElementById("profSkills").value.split(",").map(s => s.trim());
-      runProfileAnalysis();
-      switchTab("dashboard");
-    }
+        async function uploadResume() {
+            let fileInput = document.getElementById('resumePdf');
+            if(fileInput.files.length === 0) {
+                alert('Dayisi oka PDF file select cheyandi!');
+                return;
+            }
+            let res = await fetch('/api/analyze-resume', { method: 'POST' });
+            let data = await res.json();
+            let resultDiv = document.getElementById('resumeResult');
+            resultDiv.classList.remove('hidden');
+            resultDiv.innerHTML = `
+                <p class="font-bold text-indigo-400">ATS Score: ${data.ats_score}%</p>
+                <p class="text-sm text-gray-300 mt-1">${data.message}</p>
+                <button onclick="showSection('matcher')" class="mt-3 bg-purple-600 text-white px-4 py-2 rounded text-xs font-semibold">View Graphical Missing Skills & Courses</button>
+            `;
+        }
 
-    async function analyzeResumeNow() {
-      const rawText = document.getElementById("resumeRawText").value;
-      const res = await fetch(`${API_BASE}/api/analyze-resume`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ raw_text: rawText })
-      });
-      const data = await res.json();
-      appState.ats_score = data.ats_score;
-      document.getElementById("resumeAtsResult").innerText = `${data.ats_score} / 100`;
-      document.getElementById("kpiAts").innerText = `${data.ats_score}/100`;
-      document.getElementById("resumeExtractedSkills").innerHTML = data.extracted_skills.map(s => `<span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-300 text-xs">${s}</span>`).join("");
-      document.getElementById("resumeMissingKeywords").innerHTML = data.missing_keywords.map(s => `<span class="px-2 py-1 rounded bg-rose-500/10 text-rose-300 text-xs">${s}</span>`).join("");
-      document.getElementById("resumeImprovements").innerHTML = data.improvements.map(i => `<li>${i}</li>`).join("");
-      renderRadarChart();
-    }
+        async function submitQuiz() {
+            let radios = document.getElementsByName('quizAns');
+            let selected = "";
+            for(let r of radios) {
+                if(r.checked) { selected = r.value; break; }
+            }
+            if(!selected) {
+                alert('Dayisi oka option select cheyandi!');
+                return;
+            }
 
-    function renderQuiz() {
-      document.getElementById("quizContainer").innerHTML = quizQuestions.map((item, idx) => `
-        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-          <p class="font-semibold text-sm mb-3">${item.q}</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            ${item.options.map((opt, oIdx) => `
-              <label class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer text-xs">
-                <input type="radio" name="q${idx}" value="${oIdx}" ${oIdx === 1 ? "checked" : ""} /><span>${opt}</span>
-              </label>
-            `).join("")}
-          </div>
-        </div>
-      `).join("");
-    }
+            let res = await fetch('/api/evaluate-aptitude', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ answer: selected })
+            });
+            let data = await res.json();
+            let div = document.getElementById('aptitudeResult');
+            div.classList.remove('hidden');
+            div.innerHTML = `
+                <p class="font-bold text-green-400 text-sm">Evaluation Score: ${data.score}%</p>
+                <p class="text-xs text-gray-300 mt-1">${data.message}</p>
+            `;
+        }
 
-    function submitAptitudeQuiz() {
-      let correct = 0;
-      quizQuestions.forEach((item, idx) => {
-        const sel = document.querySelector(`input[name="q${idx}"]:checked`);
-        if (sel && parseInt(sel.value) === item.ans) correct++;
-      });
-      appState.aptitude_score = Math.round((correct / quizQuestions.length) * 100);
-      document.getElementById("quizFeedback").innerText = `Score: ${appState.aptitude_score}%! Dashboard updated.`;
-      runProfileAnalysis();
-    }
+        async function runAIAudioMock() {
+            let res = await fetch('/api/run-mock', { method: 'POST' });
+            let data = await res.json();
+            let div = document.getElementById('mockResult');
+            div.classList.remove('hidden');
+            div.innerHTML = `<p class="font-bold text-indigo-400">Mock Session Feedback:</p><p class="text-xs text-gray-300 mt-1">${data.feedback}</p>`;
+        }
 
-    function nextInterviewQuestion() {
-      currentQIndex = (currentQIndex + 1) % interviewQuestions.length;
-      document.getElementById("interviewQuestionText").innerText = interviewQuestions[currentQIndex];
-      document.getElementById("interviewEvalBox").classList.add("hidden");
-    }
+        async function runCoverLetter() {
+            let res = await fetch('/api/run-cover', { method: 'POST' });
+            let data = await res.json();
+            let div = document.getElementById('coverResult');
+            div.classList.remove('hidden');
+            div.innerText = data.cover_letter;
+        }
 
-    async function evaluateInterviewAnswer() {
-      const answer = document.getElementById("interviewAnswerInput").value;
-      const res = await fetch(`${API_BASE}/api/evaluate-interview`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: appState.target_role, answer })
-      });
-      const data = await res.json();
-      document.getElementById("interviewEvalBox").classList.remove("hidden");
-      document.getElementById("interviewScoreBadge").innerText = `${data.score} / 100`;
-      document.getElementById("interviewFeedbackText").innerText = data.feedback;
-      document.getElementById("interviewIdealText").innerText = data.ideal_answer;
-    }
+        async function runGitHubAudit() {
+            let res = await fetch('/api/run-github', { method: 'POST' });
+            let data = await res.json();
+            let div = document.getElementById('githubResult');
+            div.classList.remove('hidden');
+            div.innerHTML = `<p class="font-bold text-green-400">Rating: ${data.audit_score}</p><p class="text-xs text-gray-300 mt-1">${data.message}</p>`;
+        }
 
-    async function generateCoverLetter() {
-      const company = document.getElementById("clCompany").value;
-      const role = document.getElementById("clRole").value;
-      const res = await fetch(`${API_BASE}/api/generate-cover-letter`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: appState.name, role, company, skills: appState.skills })
-      });
-      const data = await res.json();
-      document.getElementById("coverLetterOutput").classList.remove("hidden");
-      document.getElementById("clResultText").value = data.cover_letter;
-      document.getElementById("ceResultText").value = data.cold_email;
-    }
+        async function analyzeSmartMatcher() {
+            let res = await fetch('/api/analyze-matcher', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ role: "AI/ML Engineer" })
+            });
+            let data = await res.json();
+            let resultDiv = document.getElementById('matcherResult');
+            resultDiv.classList.remove('hidden');
 
-    async function auditGitHub() {
-      const username = document.getElementById("ghUsername").value || "student";
-      const res = await fetch(`${API_BASE}/api/analyze-github`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username })
-      });
-      const data = await res.json();
-      document.getElementById("ghOutput").classList.remove("hidden");
-      document.getElementById("ghScore").innerText = `${data.score}/100`;
-      document.getElementById("ghRepos").innerText = `Analyzed ${data.repos_analyzed} repositories for ${username}.`;
-      document.getElementById("ghStrengths").innerHTML = data.strengths.map(s => `<li>${s}</li>`).join("");
-      document.getElementById("ghRecs").innerHTML = data.recommendations.map(r => `<li>${r}</li>`).join("");
-    }
+            let graphCardsHtml = data.skill_gap_map.map(item => `
+                <div class="p-4 bg-gray-900 rounded-xl border border-gray-800 space-y-3">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-bold text-red-400">⚠️ Missing/Low Skill: ${item.skill}</span>
+                        <span class="text-xs text-gray-400">Current Level: ${item.current_level}</span>
+                    </div>
+                    <div class="w-full bg-gray-950 h-3 rounded-full overflow-hidden border border-gray-800">
+                        <div class="bg-red-500 h-full rounded-full transition-all duration-500" style="width: ${item.bar_width}"></div>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-gray-800 text-xs">
+                        <span class="text-gray-300">Recommended Course: <a href="${item.link}" target="_blank" class="text-blue-400 underline font-bold">${item.course}</a></span>
+                        <span class="bg-indigo-900 text-indigo-200 px-2.5 py-1 rounded font-semibold">${item.platform}</span>
+                    </div>
+                </div>
+            `).join('');
 
-    function renderCompanies() {
-      document.getElementById("companyGrid").innerHTML = companyDatabase.map(c => {
-        const eligible = appState.cgpa >= c.minCgpa && appState.backlogs === 0 && appState.aptitude_score >= c.minApt;
-        return `
-          <div class="glass rounded-2xl overflow-hidden border ${eligible ? 'border-emerald-500/30' : 'border-rose-500/20'}">
-            <div class="h-24 relative"><img src="${c.logo}" class="w-full h-full object-cover opacity-40" />
-              <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold ${eligible ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">${eligible ? 'Eligible' : 'Not Eligible'}</span>
-            </div>
-            <div class="p-5">
-              <h4 class="font-bold text-base text-white">${c.name}</h4>
-              <p class="text-xs text-blue-400 font-semibold">${c.role} • ${c.ctc}</p>
-              <p class="text-xs text-slate-400 mt-2">Cutoff: ${c.minCgpa} CGPA | ${c.minApt}% Aptitude</p>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    window.onload = () => {
-      lucide.createIcons();
-      renderQuiz();
-      runProfileAnalysis();
-      analyzeResumeNow();
-    };
-  </script>
+            resultDiv.innerHTML = `
+                <div class="flex justify-between items-center bg-gray-900 p-3 rounded-lg border border-gray-800">
+                    <p class="font-bold text-white text-sm">Target Role: ${data.role}</p>
+                    <span class="text-green-400 font-bold text-sm">Overall Readiness: ${data.readiness_score}%</span>
+                </div>
+                <p class="text-xs text-gray-400 pt-2 font-semibold">Graphical Skill Gap & Course Mapping:</p>
+                <div class="space-y-3">
+                    ${graphCardsHtml}
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
